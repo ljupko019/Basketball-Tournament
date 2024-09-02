@@ -26,10 +26,12 @@ namespace Basketball_Tournament
 
         public int WinRating { get; set; }
 
-        public int AllWins{ get; set; }
-        public int AllLoses{ get; set; }
+        public int AllWins { get; set; }
+        public int AllLoses { get; set; }
 
         public Group Group { get; set; }
+
+        public List<FriendlyMatch> FriendlyMatches { get; set; } = new List<FriendlyMatch>();
 
         public void AddWin()
         {
@@ -47,9 +49,9 @@ namespace Basketball_Tournament
         public void SetPointsDifferenceAgainst(Country opponent)
         {
             var match = Matches.FirstOrDefault(m => (m.Team1 == this && m.Team2 == opponent) || (m.Team1 == opponent && m.Team2 == this));
-           
+
             if (match == null)
-            { 
+            {
             }
 
             int thisTeamScore, opponentScore;
@@ -66,7 +68,7 @@ namespace Basketball_Tournament
             PointDifference3Teams += thisTeamScore - opponentScore;
         }
 
-        public Country IsMatchWinner(Country opponent) 
+        public Country IsMatchWinner(Country opponent)
         {
             var match = Matches.FirstOrDefault(m => (m.Team1 == this && m.Team2 == opponent) || (m.Team1 == opponent && m.Team2 == this));
             if (match != null)
@@ -74,6 +76,25 @@ namespace Basketball_Tournament
                 return match.Winner;
             }
             return null;
+        }
+
+        public void FriendlyMatch()
+        {
+            foreach (var match in FriendlyMatches)
+            {
+                var resultParts = match.Result.Split('-');
+                int teamScore = int.Parse(resultParts[0]);
+                int opponentScore = int.Parse(resultParts[1]);
+
+                if (teamScore > opponentScore)
+                {
+                    AllWins++;
+                }
+                else
+                {
+                    AllLoses++;
+                }
+            }
         }
     }
 }

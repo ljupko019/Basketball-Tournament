@@ -41,6 +41,9 @@ namespace Basketball_Tournament
            .Where(list => list.Count == 2)
            .ToList();
 
+            //Ukoliko sva 3 tima imaju isti broj osvojenih poena
+            //racunamo razliku u postignutim poenima i primljenim poenima
+            //iz medjusobnih utakmica
             if (listOfThreeTeams.Count > 0)
             {
                 teamsWithSamePoints = listOfThreeTeams.First();
@@ -66,6 +69,9 @@ namespace Basketball_Tournament
                         teamAlone = country;
                     }
                 }
+                //provera ko ima vise osvojenih poena
+                //jedan tim koji ima razlicit broj poena ili ostale 3 ekipe
+                //na osnovu toga ih dodajemo u listu odredjenim redosledom
                 if (teamsWithSamePoints[0].Points > teamAlone.Points)
                 {
                     List<Country> teams = teamsWithSamePoints;
@@ -83,11 +89,19 @@ namespace Basketball_Tournament
                     Teams = teams;
                 }
             }
+            //ukoliko 2 tima imaju isti broj osvojenih poena
+            //ukoliko 2 tima imaju isti broj osvojenih poena
+            //ostala 2 tima takodje moraju da imaju isti broj osvojenih poena
             else if (listOfTwoTeams.Count == 2)
-            {               
+            {
+                //na osnovu toga ko je bio bolji u medjusobnom susretu
+                //odredjujemo ko ce biti bolje rangiran
                 Country winner1 = listOfTwoTeams.First()[0].IsMatchWinner(listOfTwoTeams.First()[1]);
                 Country winner2 = listOfTwoTeams.Last()[0].IsMatchWinner(listOfTwoTeams.Last()[1]);
 
+                
+                //uporedjujemo koji timovi imaju veci broj osvojenih poena
+                //s tim ih dodajemo odredjenim redosledom u listu
                 if (winner1.Points > winner2.Points)
                 {
                     Teams.Clear();
@@ -135,6 +149,8 @@ namespace Basketball_Tournament
                     }
                 }
             }
+            //ukoliko svi timovi imaju razlicit broj osvojenih poena
+            //sortiramo ih po broju osvojenih poena
             else 
             {
                 Teams.Sort((x, y) => y.Points.CompareTo(x.Points));
@@ -163,6 +179,8 @@ namespace Basketball_Tournament
             }
         }
 
+        //uporedjujemo broj osvojenih poena timova koji imaju isti broj osvojenih poena
+        //sa ostalim timovima
         public void CalculateTwoTeamsSamePoints(List<Country> teamsWithSamePoints)
         {
             Country otherBetterTeam = new Country();

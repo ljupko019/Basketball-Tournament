@@ -65,6 +65,7 @@ namespace Basketball_Tournament
             }
         }
 
+        //Rangiranje timova od 1 do 9 mesta
         public void AddTeamsToPlaceGroups()
         {
             foreach (Group group in allGroups)
@@ -116,12 +117,12 @@ namespace Basketball_Tournament
         .Where(list => list.Count == 2)
         .ToList();
 
-                //Ukoliko sva 3 tima imaju istu medjusobnu razliku u poenima
+                //Ukoliko sva 3 tima imaju istu razliku u poenima
                 if (listOfThreeTeamsPointsDifferece.Count == 3)
                 {
                     teams.Sort((x, y) => y.PointsScored.CompareTo(x.PointsScored));
                 }
-                // Ukoliko 2 tima imaju istu medjusobnu razliku u poenima
+                // Ukoliko 2 tima imaju istu razliku u poenima
                 else if (listOfTwoTeamsPointsDifferece.Count == 2)
                 {
                     Country aloneTeam = new Country();
@@ -138,7 +139,7 @@ namespace Basketball_Tournament
                     teams.Clear();
                     listOfTwoTeamsPointsDifferece.First().Sort((x, y) => y.PointsScored.CompareTo(x.PointsScored));
                     //provera da li 2 tima, koji imaju istu razliku u poenima, imaju vecu razliku u poenima
-                    //od treceg tima
+                    //od treceg tima. na osnovu toga razlicitim redom ih dodajem u listu i tako sortima listu
                     if (listOfTwoTeamsPointsDifferece.First()[0].PointDifference > aloneTeam.PointDifference)
                     {
                         teams.Add(listOfTwoTeamsPointsDifferece.First()[0]);
@@ -177,7 +178,8 @@ namespace Basketball_Tournament
                 //od treceg tima
                 if (listOfTwoTeams.First()[0].Points > aloneTeam.Points)
                 {
-
+                    //provera koji tim ima vecu razliku u poenima
+                    //kako bismo ih dodali pravilnim redosledom
                     if (listOfTwoTeams.First()[0].PointDifference > listOfTwoTeams.First()[1].PointDifference)
                     {
                         teams.Add(listOfTwoTeams.First()[0]);
@@ -190,6 +192,7 @@ namespace Basketball_Tournament
                     }
                     else
                     {
+                        //ukoliko im je ista razlika u poenima sortiramo ih po postignutim poenima
                         listOfTwoTeams.First().Sort((x, y) => y.PointsScored.CompareTo(x.PointsScored));
                         teams.Add(listOfTwoTeams.First()[0]);
                         teams.Add(listOfTwoTeams.First()[1]);
@@ -219,12 +222,15 @@ namespace Basketball_Tournament
                 }
 
             }
+            //ukoliko svi timovi imaju razlicit broj osvojenih poena
+            //sortiramo ih po broju osvojenih poena
             else
             {
                 teams.Sort((x, y) => y.Points.CompareTo(x.Points));
             }
         }
 
+        //sortiranje timova u allTeam od 1 do 9 mesta
         public void SortTeamsPerGroupRang()
         {
             allTeams.Sort((x, y) => y.GroupRang.CompareTo(x.GroupRang));
@@ -349,6 +355,7 @@ namespace Basketball_Tournament
             SemiFinals(quarterFinalMatches);
         }
 
+        //moguce utakmice po sesirima
         public List<(Country, Country)> SetPossiblePairs(List<Country> pot1, List<Country> pot2)
         {
             List<(Country, Country)> possiblePairs = new List<(Country, Country)>();
@@ -370,8 +377,8 @@ namespace Basketball_Tournament
             List<Match> semiFinalMatches = new List<Match>();
             Random random = new Random();
 
-            // Podeli parove cetvrtfinala u dva dela
-            
+            //Sortiranje meceva u zavisnosti od sesira u kome se nalaze
+            //kako bismo ukrstili timove na odgovarajuci nacin po sesirima
             List<Match> matchesDG = quarterFinalMatches.Where(m => (allPots[0].Teams.Contains(m.Team1) && allPots[3].Teams.Contains(m.Team2)) ||
                                                                     (allPots[3].Teams.Contains(m.Team1) && allPots[0].Teams.Contains(m.Team2))).ToList();
             List<Match> matchesEF = quarterFinalMatches.Where(m => (allPots[2].Teams.Contains(m.Team1) && allPots[1].Teams.Contains(m.Team2)) ||
@@ -398,11 +405,14 @@ namespace Basketball_Tournament
             {           
                 match.SimulateMatch();
             }
+            
+            Match thirdPlaceMatch = ThirdPlaceMatch(semiFinalMatches);
+            Match finalMatch = Final(semiFinalMatches);
 
-            Final(semiFinalMatches);
+            PrintMedals(finalMatch,thirdPlaceMatch);
         }
 
-        public void Final(List<Match> semiFinalMatches) 
+        public Match Final(List<Match> semiFinalMatches) 
         {
             Country winnerTeam1 = semiFinalMatches[0].Winner;
             Country winnerTeam2 = semiFinalMatches[1].Winner;
@@ -410,6 +420,30 @@ namespace Basketball_Tournament
             Match finalMatch = new Match(winnerTeam1, winnerTeam2);
             Console.WriteLine("\n Finale : ");
             finalMatch.SimulateMatch();
+            return finalMatch;
+        }
+
+        public Match ThirdPlaceMatch(List<Match> semiFinalMatches) 
+        {
+            Country loserTeam1 = semiFinalMatches[0].Loser;
+            Country loserTeam2 = semiFinalMatches[1].Loser;
+
+            Match thirdPlaceMatch = new Match(loserTeam1, loserTeam2);
+            Console.WriteLine("\n Utakmica za trece mesto : ");
+            thirdPlaceMatch.SimulateMatch();
+            return thirdPlaceMatch;
+        }
+
+        public void PrintMedals(Match finalMatch, Match thirdPlaceMatch) 
+        {
+            Country firstPlace = finalMatch.Winner;
+            Country secondPlace = finalMatch.Loser;
+            Country thirdPlace = thirdPlaceMatch.Winner;
+
+            Console.WriteLine("\n Medalje : ");
+            Console.WriteLine("1. " + firstPlace.Team);
+            Console.WriteLine("2. " + secondPlace.Team);
+            Console.WriteLine("3. " + thirdPlace.Team);
         }
     }
 }

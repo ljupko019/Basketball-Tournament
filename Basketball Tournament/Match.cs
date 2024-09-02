@@ -33,10 +33,13 @@ namespace Basketball_Tournament
         {
             double probabilityTeam1Wins = CalculateWinProbability(Team1.FIBARanking, Team2.FIBARanking);
             double probabilityTeam2Wins = 1 - probabilityTeam1Wins;
+
+            double winFactorTeam1 = Team1.AllWins - Team1.AllLoses;
+            double winFactorTeam2 = Team2.AllWins - Team2.AllLoses;
             do
             {
-                Team1Score = (int)(rand.Next(70, 101) + probabilityTeam1Wins * 10);
-                Team2Score = (int)(rand.Next(70, 101) + probabilityTeam2Wins * 10);
+                Team1Score = (int)(rand.Next(70, 101) + probabilityTeam1Wins * 10 + winFactorTeam1 * 2);
+                Team2Score = (int)(rand.Next(70, 101) + probabilityTeam2Wins * 10 + winFactorTeam2 * 2);
 
                 if (Team1Score > Team2Score)
                 {
