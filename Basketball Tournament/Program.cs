@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 string json = File.ReadAllText("F:\\project c#\\Basketball Tournament\\Basketball Tournament\\groups.json");
 var groups = JsonConvert.DeserializeObject<Dictionary<string, List<Country>>>(json);
 
+//test1
 Tournament tournament = new Tournament();
 
 Group groupA = new Group { Teams = groups["A"], Name = "A" };
